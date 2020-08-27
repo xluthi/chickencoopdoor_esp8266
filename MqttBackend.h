@@ -25,6 +25,7 @@
 #include "PubSubClient.h"
 #include <ESP8266httpUpdate.h>
 #include "FlashConfig.h"
+#include "MyRTC.h"
 
 
 // Specific topic that all hardware on the network must listen to and answer.
@@ -43,7 +44,9 @@ class MqttBackend : public PubSubClient {
 		bool forceReconnect(); // explicitly disconnect first
 		// send message to a specific mqtt log topic
 		bool sendLog(const char *message);
-		void setFlashConfig(FlashConfig& config);
+		void setFlashConfig(FlashConfig *config);
+		void setMyRTC(MyRTC *rtc);
+		bool send(const char *topic, const char *payload, bool relative = true);
 
 	private:
 		IPAddress _serverIPAddress;
@@ -52,6 +55,7 @@ class MqttBackend : public PubSubClient {
 		String _id;
 		String _rootTopic;
 		FlashConfig* _config;
+		MyRTC* _rtc;
 		bool _doSendLogs = true; // set to false to avoid sending log message via MQTT (/log topic)
 
 		void callback(char* topic, byte* payload, unsigned int length);

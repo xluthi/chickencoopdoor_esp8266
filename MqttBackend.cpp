@@ -24,6 +24,7 @@
 MqttBackend::MqttBackend(WiFiClient& wifiClient) : PubSubClient(wifiClient) {
 	this->_wifiClient = &wifiClient;
 	this->_config = NULL;
+	this->_rtc = NULL;
 };
 
 void MqttBackend::setup(const char* serverIP, int port, String myId) {
@@ -42,10 +43,13 @@ void MqttBackend::setRootTopic() {
 	this->_rootTopic = String(MQTT_ROOT) + "/" + _id;
 }
 
-void MqttBackend::setFlashConfig(FlashConfig& config) {
-	_config = &config;
+void MqttBackend::setFlashConfig(FlashConfig *config) {
+	_config = config;
 }
 
+void MqttBackend::setMyRTC(MyRTC *rtc) {
+	_rtc = rtc;
+}
 
 bool MqttBackend::reconnect() {
   // Loop until we're reconnected
@@ -71,8 +75,19 @@ bool MqttBackend::forceReconnect() {
 	return reconnect();
 }
 
+bool MqttBackend::send(const char *topic, const char *payload, bool relative) {
+	if (relative == false) {
+		return this->sendMessage(topic, payload);
+	}
+	// The provided topic is relative -> let's build the full topic
+	const char *fullTopic = (_rootTopic + "/" + String(topic)).c_str();
+	return this->sendMessage(fullTopic, payload);
+}
+
+
 bool MqttBackend::sendMessage(const char *topic, const char *payload) {
 	Serial.printf("Sending message '%s' to topic '%s'\n", payload, topic);
+	Serial.printf("Size of payload is: %zu\n", strlen(payload));
 	return this->publish(topic, payload);
 }
 
@@ -198,5 +213,19 @@ void MqttBackend::onCallback(char* topic, byte* payload, unsigned int length) {
 	else if (s_topic == "dump_flash") {
 		if(!_config) return;
 		sendLog(_config->dumpConfig().c_str());
+	}
+
+	else if (s_topic == "get_rtc" && _rtc) {
+		char buffer[] = "YYYY-MM-DD hh:mm:ss";
+	  _rtc->getNow().toString(buffer);
+		sendMessage((String(topic) + "/result").c_str(), buffer);
+	}
+
+	else if (s_topic == "set_rtc" && _rtc && length >= 19) {
+		// payload must be in iso8601 format (e.g. 2020-06-25T15:29:37)
+		Serial.print("adjusting real time clock, previous time was: ");
+		char buffer[] = "YYYY-MM-DD hh:mm:ss";
+		Serial.println(_rtc->getNow().toString(buffer));
+		_rtc->setMqttNow((char*)payload);
 	}
 }

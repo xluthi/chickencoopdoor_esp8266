@@ -1,20 +1,17 @@
-# Pulse counter with ESP8266 #
+# Automatic chicken coop door controlled by an ESP8266 #
 
-This simple sketch detects magnetic pulse thanks to a reed switch, and sends it immediately to an MQTT broker.
+The purpose of this project is to control a chicken coop door with an ESP8266.  The main features are:
+  - It should open and close the door based on the time of the day (thanks to a real-time clock module) and a predefined pattern.
+  - It should open and close the door based on the sunrise/sunset.
+  - it supports MQTT to report status, update its configuration, or manually controlling the door.
 
-It is used with a Kent V100 (PSM) water meter, which is heavily used in Belgium.  It generates one pulse per 0.5 liter.
-
-The hardware schematic is quite simple:
-
-![Schematic](schematic/pulse_counter_ESP8266_schematic.png)
-
-![Breadboard](schematic/pulse_counter_ESP8266_bb.png)
+Technically, it uses a DS1307 RTC module, a stepper motor, some stop contacts, saving of configuration in EEPROM...
 
 
-Digital input D1 is set to ground thanks to a pull down resistor R2.  When the reed switch is closed, the input is raised to VCC and an interrupt is detected.  The LED1 is flashing to provide a visual control when a pulse is detected.
+The initial code is based on https://github.com/xluthi/pulse_counter_esp8266.
+
 
 ## MQTT ##
-MQTT is used in order to use Grafana & InfluxDB as database and visualization tool, allowing greater flexibility in the aggregation and custom made dashboards.
 
 The following topics are defined (*my_hostname* is the ESP chipID (aka serial number) of the ESP8266):
 
@@ -66,10 +63,6 @@ The following topics are defined (*my_hostname* is the ESP chipID (aka serial nu
     * *answer*: none
     * *payload*: 0 -->Turn LED off.  Any other char --> turn the LED on.
     * *usage*: Test MQTT messaging by controlling builtin LED.
-
-
-
-The device is reporting pulses (aka. water volume consumption in liter) on the topic **/house/sensors/water/city**. This value is configurable in the `private.h` file.
 
 
 ## Compilation ##
