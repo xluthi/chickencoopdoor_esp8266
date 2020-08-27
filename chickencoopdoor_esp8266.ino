@@ -21,8 +21,8 @@
 
 
 // PIN definition
-#define reedLedPin D2
-#define reedPin    D1
+#define reedLedPin D4
+#define reedPin    D3
 #define delayPulse 4 // wait between two pulses (multiple of delay_timer0). Avoid false reading with slow rotation
 
 // Internal timer values, used for interrupts.
@@ -43,6 +43,7 @@ volatile unsigned long lastDebounce = 0;
 WiFiClient espClient;
 MqttBackendWater mqttClient(espClient);
 FlashConfig flashConfig;
+MyRTC rtc;
 
 void setup() {
 #ifdef DEBUG
@@ -59,7 +60,9 @@ void setup() {
 
   connectWifi(wifi_ssid, wifi_password, flashConfig.getHostname().c_str());
   mqttClient.setup(MQTT_SERVER_IP, MQTT_SERVER_PORT, flashConfig.getHostname());
-  mqttClient.setFlashConfig(flashConfig);
+  mqttClient.setFlashConfig(&flashConfig);
+  rtc.setup();
+  mqttClient.setMyRTC(&rtc);
 
   // configure "master" timer to 1 second.
   noInterrupts();
