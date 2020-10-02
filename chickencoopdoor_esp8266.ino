@@ -15,12 +15,10 @@
 #include "private.h"
 #include "MqttBackend.h"
 #include "FlashConfig.h"
+#include "MyMotor.h"
 
 #define DEBUG
 #include "xl_debug.h"
-
-
-// PIN definition
 
 WiFiClient espClient;
 MqttBackend mqttClient(espClient);

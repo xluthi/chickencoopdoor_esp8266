@@ -25,6 +25,7 @@ MqttBackend::MqttBackend(WiFiClient& wifiClient) : PubSubClient(wifiClient) {
 	this->_wifiClient = &wifiClient;
 	this->_config = NULL;
 	this->_rtc = NULL;
+	this->_motor = new MyMotor();
 };
 
 void MqttBackend::setup(const char* serverIP, int port, String myId) {
@@ -227,5 +228,20 @@ void MqttBackend::onCallback(char* topic, byte* payload, unsigned int length) {
 		char buffer[] = "YYYY-MM-DD hh:mm:ss";
 		Serial.println(_rtc->getNow().toString(buffer));
 		_rtc->setMqttNow((char*)payload);
+	}
+
+	else if (s_topic == "motor_turn_cw") {
+		Serial.println("Starting motor Clockwise...");
+		_motor->turn_cw();
+	}
+
+	else if (s_topic == "motor_turn_ccw") {
+		Serial.println("Starting motor Counter Clockwise...");
+		_motor->turn_ccw();
+	}
+
+	else if (s_topic == "motor_stop") {
+		Serial.println("Stopping motor!");
+		_motor->stop();
 	}
 }

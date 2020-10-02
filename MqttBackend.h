@@ -26,6 +26,7 @@
 #include <ESP8266httpUpdate.h>
 #include "FlashConfig.h"
 #include "MyRTC.h"
+#include "MyMotor.h"
 
 
 // Specific topic that all hardware on the network must listen to and answer.
@@ -56,6 +57,7 @@ class MqttBackend : public PubSubClient {
 		String _rootTopic;
 		FlashConfig* _config;
 		MyRTC* _rtc;
+		MyMotor* _motor;
 		bool _doSendLogs = true; // set to false to avoid sending log message via MQTT (/log topic)
 
 		void callback(char* topic, byte* payload, unsigned int length);
