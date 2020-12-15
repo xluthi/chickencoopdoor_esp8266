@@ -18,16 +18,19 @@
 */
 #include "MyRTC.h"
 
-void MyRTC::setup() {
+void MyRTC::setup(FlashConfig *config) {
   if (! rtc.begin()) {
     Serial.println("Couldn't find RTC");
     Serial.flush();
     abort();
   }
+  setFlashConfig(config);
 }
 
 void MyRTC::setFlashConfig(FlashConfig *config) {
   this->config = config;
+  this->openingTime = this->config->getOpeningTime();
+  this->closingTime = this->config->getClosingTime();
 }
 
 DateTime MyRTC::getNow() {
@@ -41,4 +44,18 @@ void MyRTC::setNow(DateTime dt) {
 
 void MyRTC::setMqttNow(const char *iso8601DateTime) {
   rtc.adjust(DateTime(iso8601DateTime));
+}
+
+MyDoorAction MyRTC::getDesiredAction() {
+  DateTime now = rtc.now();
+  DateTime todayOpening = DateTime(now.year(), now.month(), now.day(),
+    openingTime.hour(), openingTime.minute(), openingTime.second());
+  DateTime todayClosing = DateTime(now.year(), now.month(), now.day(),
+    closingTime.hour(), closingTime.minute(), closingTime.second());
+
+  if (now > todayOpening && now < todayClosing) {
+    return OPEN;
+  } else {
+    return CLOSE;
+  }
 }

@@ -25,7 +25,6 @@ MqttBackend::MqttBackend(WiFiClient& wifiClient) : PubSubClient(wifiClient) {
 	this->_wifiClient = &wifiClient;
 	this->_config = NULL;
 	this->_rtc = NULL;
-	this->_motor = new MyMotor();
 };
 
 void MqttBackend::setup(const char* serverIP, int port, String myId) {
@@ -50,6 +49,10 @@ void MqttBackend::setFlashConfig(FlashConfig *config) {
 
 void MqttBackend::setMyRTC(MyRTC *rtc) {
 	_rtc = rtc;
+}
+
+void MqttBackend::setMyDoor(MyDoor *door) {
+	_door = door;
 }
 
 bool MqttBackend::reconnect() {
@@ -230,18 +233,18 @@ void MqttBackend::onCallback(char* topic, byte* payload, unsigned int length) {
 		_rtc->setMqttNow((char*)payload);
 	}
 
-	else if (s_topic == "motor_turn_cw") {
-		Serial.println("Starting motor Clockwise...");
-		_motor->turn_cw();
+	else if (s_topic == "door_automatic") {
+		Serial.print("Setting door to automatic");
+		_door->mode = AUTOMATIC;
 	}
-
-	else if (s_topic == "motor_turn_ccw") {
-		Serial.println("Starting motor Counter Clockwise...");
-		_motor->turn_ccw();
+	else if (s_topic = "door_manual_open") {
+		Serial.print("Opening manually the door...");
+		_door->mode = MANUAL;
+		_door->open();
 	}
-
-	else if (s_topic == "motor_stop") {
-		Serial.println("Stopping motor!");
-		_motor->stop();
+	else if (s_topic = "door_manual_close") {
+		Serial.print("Closing manually the door...");
+		_door->mode = MANUAL;
+		_door->close();
 	}
 }

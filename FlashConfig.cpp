@@ -40,6 +40,8 @@ void FlashConfig::loadFromEeprom() {
       sprintf(config.hostname, "ESP-%06X", ESP.getChipId());
       config.magic = FLASH_CONFIG_MAGIC;
       config.version=0;
+      config.openingTime = DateTime(0,0,0,7 ,0,0); // default opening at 7AM
+      config.closingTime = DateTime(0,0,0,20,0,0); // default closing at 8PM
 
       save();
     } else {
@@ -58,7 +60,13 @@ void FlashConfig::save() {
 String FlashConfig::dumpConfig() {
   String s;
   s += "Hostname: " + String(config.hostname) +
-      ", Version: " + String(config.version);
+      ", Version: " + String(config.version) +
+      ", opening time: ";
+  char buffer[] = "hh:mm:ss";
+  config.openingTime.toString(buffer);
+  s += String(buffer) + ", closing time: ";
+  config.closingTime.toString(buffer);
+  s+= String(buffer);
   return s;
 }
 
@@ -68,5 +76,20 @@ String  FlashConfig::getHostname() {
 
 void FlashConfig::setHostname(String h) {
   strcpy(config.hostname, h.c_str());
+  save();
+}
+
+DateTime FlashConfig::getOpeningTime() {
+  return config.openingTime;
+}
+DateTime FlashConfig::getClosingTime() {
+  return config.closingTime;
+}
+void FlashConfig::setOpeningTime(DateTime dt) {
+  config.openingTime = dt;
+  save();
+}
+void FlashConfig::setClosingTime(DateTime dt) {
+  config.closingTime = dt;
   save();
 }

@@ -16,6 +16,9 @@
 #include "MqttBackend.h"
 #include "FlashConfig.h"
 #include "MyMotor.h"
+#include "MySwitch.h"
+#include "MyDoor.h"
+#include "MyRTC.h"
 
 #define DEBUG
 #include "xl_debug.h"
@@ -24,6 +27,7 @@ WiFiClient espClient;
 MqttBackend mqttClient(espClient);
 FlashConfig flashConfig;
 MyRTC rtc;
+MyDoor door;
 
 void setup() {
 #ifdef DEBUG
@@ -36,11 +40,23 @@ void setup() {
   connectWifi(wifi_ssid, wifi_password, flashConfig.getHostname().c_str());
   mqttClient.setup(MQTT_SERVER_IP, MQTT_SERVER_PORT, flashConfig.getHostname());
   mqttClient.setFlashConfig(&flashConfig);
-  rtc.setup();
+  rtc.setup(&flashConfig);
   mqttClient.setMyRTC(&rtc);
+  door.setup();
+  mqttClient.setMyDoor(&door);
+
+  my_switches_setup();
 }
 
 void loop() {
   mqttClient.reconnect();
   mqttClient.loop();
+
+  if (door.mode == AUTOMATIC) {
+    if (rtc.getDesiredAction() == OPEN) {
+      door.open();
+    } else {
+      door.close();
+    }
+  }
 }

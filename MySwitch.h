@@ -14,24 +14,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-    My DC motor controlled by a L9110S controller
+    My own Switch
 */
-#include <Arduino.h>
-#include "MyMotor.h"
+#ifndef _MY_SWITCH_H_
+#define _MY_SWITCH_H_
 
-void MyMotor::setup() {
-  Serial.println("MyMotor initialized, but nothing special to do so far...");
-}
+#define BOTTOM_SWITCH_PIN D6
+#define TOP_SWITCH_PIN D7 //??
 
-void MyMotor::turn_cw(int speed) {
-  analogWrite(motor1A, speed);
-  analogWrite(motor1B, 0);
-}
-void MyMotor::turn_ccw(int speed) {
-  analogWrite(motor1A, 0);
-  analogWrite(motor1B, speed);
-}
-void MyMotor::stop() {
-  analogWrite(motor1A, 0);
-  analogWrite(motor1B, 0);
-}
+extern MyDoor door;
+
+void my_switches_setup();
+ICACHE_RAM_ATTR void my_switch_bottom_callback();
+ICACHE_RAM_ATTR void my_switch_top_callback();
+
+#endif

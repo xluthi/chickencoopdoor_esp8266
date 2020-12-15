@@ -21,20 +21,27 @@
 
 #include <RTClib.h>
 #include "FlashConfig.h"
+#include "MyDoor.h"  // for enum MyDoorAction
 
 #define MQTT_RTC_TOPIC "rtc"
 
+//typedef enum { OPENED, CLOSED} MyRTCDoorState;
+
 class MyRTC {
   public:
-    void setFlashConfig(FlashConfig *config);
-    void setup();
+    void setup(FlashConfig *config);
     DateTime getNow();
     void setNow(DateTime dt);
     void setMqttNow(const char *iso8601DateTime);
+    MyDoorAction getDesiredAction();
 
   private:
     FlashConfig *config;
     RTC_DS1307 rtc;
+    DateTime openingTime;
+    DateTime closingTime;
+
+    void setFlashConfig(FlashConfig *config);
 };
 
 #endif

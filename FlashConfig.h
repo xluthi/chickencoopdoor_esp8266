@@ -21,6 +21,7 @@
 
 #include <Arduino.h>
 #include <EEPROM.h>
+#include <RTClib.h> // DateTime
 
 // Reserved size in bytes
 #define FLASH_CONFIG_SIZE 128
@@ -36,11 +37,17 @@ class FlashConfig {
 
     String getHostname();
     void setHostname(String h);
+    DateTime getOpeningTime();
+    DateTime getClosingTime();
+    void     setOpeningTime(DateTime dt);
+    void     setClosingTime(DateTime dt);
 
   private:
     struct sConfig {
       char hostname[32];
       uint version;
+      DateTime openingTime;
+      DateTime closingTime;
       unsigned long magic;
     } config;
     uint address;

@@ -19,7 +19,7 @@
 #ifndef _MY_MOTOR_H_
 #define _MY_MOTOR_H_
 
-#define motor1B D4
+#define motor1B D5
 #define motor1A D3
 
 class MyMotor {
