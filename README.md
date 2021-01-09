@@ -64,6 +64,18 @@ The following topics are defined (*my_hostname* is the ESP chipID (aka serial nu
     * *payload*: 0 -->Turn LED off.  Any other char --> turn the LED on.
     * *usage*: Test MQTT messaging by controlling builtin LED.
 
+7. house/hardware/my_hostname/get_rtc
+    * *direction*: get
+    * *answer*: date&time,  e.g.: 2021-01-09 17:35:11
+    * *payload*: none
+    * *usage*: returns the current date & time from the RTC module.
+
+8. house/hardware/my_hostname/set_rtc
+    * *direction*: set
+    * *answer*: none
+    * *payload*: the date and time in the iso8601 format (e.g. 2020-06-25T15:29:37), without timezone info
+    * *usage*: update the RTC module date and time.  On Linux, an easy way to generate the date & time with the correct format is `date +%Y-%m-%dT%T`.
+
 
 ## Compilation ##
 

@@ -52,6 +52,7 @@ class FlashConfig {
     } config;
     uint address;
     void loadFromEeprom();
+    void initializeToDefaultValues();
 };
 
 #endif

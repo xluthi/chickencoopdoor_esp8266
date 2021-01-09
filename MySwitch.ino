@@ -26,20 +26,25 @@ void my_switches_setup() {
   pinMode(TOP_SWITCH_PIN, INPUT);
   attachInterrupt(digitalPinToInterrupt(TOP_SWITCH_PIN), my_switch_top_callback, CHANGE);
 
+  // init to current value
+  my_switch_bottom_callback();
+  my_switch_top_callback();
+
 }
 
 ICACHE_RAM_ATTR void my_switch_bottom_callback() {
-  Serial.println("Interupt for bottom switch!");
-  if (digitalRead(BOTTOM_SWITCH_PIN) == HIGH) {
+  if (digitalRead(BOTTOM_SWITCH_PIN) == LOW) {
     door.bottomSwitch = S_CLOSED;
+    Serial.println("Interupt for bottom switch: CLOSED");
   } else {
     door.bottomSwitch = S_OPENED;
+    Serial.println("Interupt for bottom switch: OPENED");
   }
 }
 
 ICACHE_RAM_ATTR void my_switch_top_callback() {
   Serial.println("Interupt for top switch!");
-  if (digitalRead(TOP_SWITCH_PIN) == HIGH) {
+  if (digitalRead(TOP_SWITCH_PIN) == LOW) {
     door.topSwitch = S_CLOSED;
   } else {
     door.topSwitch = S_OPENED;

@@ -233,17 +233,27 @@ void MqttBackend::onCallback(char* topic, byte* payload, unsigned int length) {
 		_rtc->setMqttNow((char*)payload);
 	}
 
+	else if (s_topic == "get_rtc_desired_action") {
+		char msg[100];
+		if (_rtc->getDesiredAction() == OPEN) {
+			sprintf(msg, "Normally, the door should be OPENed.");
+		} else {
+			sprintf(msg, "Normally, the door should be CLOSEd.");
+		}
+		sendLog(msg);
+	}
+
 	else if (s_topic == "door_automatic") {
-		Serial.print("Setting door to automatic");
+		Serial.println("Setting door to automatic");
 		_door->mode = AUTOMATIC;
 	}
-	else if (s_topic = "door_manual_open") {
-		Serial.print("Opening manually the door...");
+	else if (s_topic == "door_manual_open") {
+		Serial.println("Opening manually the door...");
 		_door->mode = MANUAL;
 		_door->open();
 	}
-	else if (s_topic = "door_manual_close") {
-		Serial.print("Closing manually the door...");
+	else if (s_topic == "door_manual_close") {
+		Serial.println("Closing manually the door...");
 		_door->mode = MANUAL;
 		_door->close();
 	}

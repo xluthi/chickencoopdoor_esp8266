@@ -35,19 +35,21 @@ void FlashConfig::loadFromEeprom() {
     Serial.println("MAGIC number read in EEPROM : " + String(config.magic));
     if(config.magic != FLASH_CONFIG_MAGIC) {
       Serial.println("Config not initialised yet. Setting default values");
-      // default values
-      //strcpy(config.hostname, "ESP-SENSOR");
-      sprintf(config.hostname, "ESP-%06X", ESP.getChipId());
-      config.magic = FLASH_CONFIG_MAGIC;
-      config.version=0;
-      config.openingTime = DateTime(0,0,0,7 ,0,0); // default opening at 7AM
-      config.closingTime = DateTime(0,0,0,20,0,0); // default closing at 8PM
-
+      initializeToDefaultValues();
       save();
     } else {
       Serial.println("Config read from EEPROM successfully");
       Serial.println(dumpConfig());
     }
+}
+
+void FlashConfig::initializeToDefaultValues() {
+  // default values
+  sprintf(config.hostname, "ESP-%06X", ESP.getChipId());
+  config.magic = FLASH_CONFIG_MAGIC;
+  config.version=0;
+  config.openingTime = DateTime(0,0,0,7 ,0,0); // default opening at 7AM
+  config.closingTime = DateTime(0,0,0,20,0,0); // default closing at 8PM
 }
 
 void FlashConfig::save() {
@@ -62,9 +64,11 @@ String FlashConfig::dumpConfig() {
   s += "Hostname: " + String(config.hostname) +
       ", Version: " + String(config.version) +
       ", opening time: ";
-  char buffer[] = "hh:mm:ss";
+  char buffer[9];
+  strncpy(buffer, "hh:mm:ss", 9);
   config.openingTime.toString(buffer);
   s += String(buffer) + ", closing time: ";
+  strncpy(buffer, "hh:mm:ss", 9);
   config.closingTime.toString(buffer);
   s+= String(buffer);
   return s;

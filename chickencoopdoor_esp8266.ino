@@ -52,6 +52,19 @@ void loop() {
   mqttClient.reconnect();
   mqttClient.loop();
 
+  if (door.state == NA) {
+    // Normally, it should never happen, but in case, we switch back to automatic mode
+    door.mode = AUTOMATIC;
+  }
+
+  if (door.mode == MANUAL) {
+    if (rtc.getDesiredAction() == OPEN && door.state == DOOR_OPENED) {
+      door.mode == AUTOMATIC;
+    } else if (rtc.getDesiredAction() == CLOSED && door.state == DOOR_CLOSED) {
+      door.mode == AUTOMATIC;
+    }
+  }
+
   if (door.mode == AUTOMATIC) {
     if (rtc.getDesiredAction() == OPEN) {
       door.open();
@@ -59,4 +72,6 @@ void loop() {
       door.close();
     }
   }
+
+  door.loop();
 }
