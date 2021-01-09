@@ -79,8 +79,34 @@ The following topics are defined (*my_hostname* is the ESP chipID (aka serial nu
 
 ## Compilation ##
 
-In order to compile this sketch, you need a specific version of the PubSubClient: please download it on GitHub: https://github.com/xluthi/pubsubclient.
+In order to compile this sketch, you need a specific version of the PubSubClient: please download it on GitHub: https://github.com/xluthi/pubsubclient.  You'll also need to install RTClib from Adafruit (https://github.com/adafruit/RTClib).
 
 Before compiling, create a `private.h` file based on the provided `private_example.h` file: it should contain your Wifi settings, as well as the MQTT broker parameters.
 
 The code contains a lot of debug statements. If those are not required, comment the `#define DEBUG` at the beginning of the main file.
+
+### Using arduino-cli to compile
+
+It is quite easy to use `arduino-cli` to compile this project.  Here is the list of operations:
+
+1. prepare environment and install dependencies
+```
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+
+arduino-cli core update-index
+arduino-cli core install esp8266:esp8266
+
+arduino-cli lib update-index
+arduino-cli lib install RTClib
+```
+
+2. Compilation and upload in the board
+```
+arduino-cli compile --fqbn esp8266:esp8266:d1_mini chickencoopdoor_esp8266
+arduino-cli upload -v -p /dev/ttyUSB0 --fqbn esp8266:esp8266:d1_mini chickencoopdoor_esp8266
+```
+
+3. Monitor the Serial connection in a terminal
+```
+stty -F /dev/ttyACM0 raw 115200 && cat /dev/ttyACM0
+```
