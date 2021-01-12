@@ -12,7 +12,9 @@
    See LICENSE.txt for the full license text.
 */
 #include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
 #include "private.h"
+#include "MyBlynk.h"
 #include "MqttBackend.h"
 #include "FlashConfig.h"
 #include "MyMotor.h"
@@ -37,7 +39,7 @@ void setup() {
 
   flashConfig.setup();
 
-  connectWifi(wifi_ssid, wifi_password, flashConfig.getHostname().c_str());
+  my_blynk_setup(flashConfig.getHostname());
   mqttClient.setup(MQTT_SERVER_IP, MQTT_SERVER_PORT, flashConfig.getHostname());
   mqttClient.setFlashConfig(&flashConfig);
   rtc.setup(&flashConfig);
@@ -51,11 +53,7 @@ void setup() {
 void loop() {
   mqttClient.reconnect();
   mqttClient.loop();
-
-  if (door.state == NA) {
-    // Normally, it should never happen, but in case, we switch back to automatic mode
-    door.mode = AUTOMATIC;
-  }
+  Blynk.run();
 
   if (door.mode == MANUAL) {
     if (rtc.getDesiredAction() == OPEN && door.state == DOOR_OPENED) {

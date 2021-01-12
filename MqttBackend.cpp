@@ -246,15 +246,18 @@ void MqttBackend::onCallback(char* topic, byte* payload, unsigned int length) {
 	else if (s_topic == "door_automatic") {
 		Serial.println("Setting door to automatic");
 		_door->mode = AUTOMATIC;
+		blynk_update_door_mode();
 	}
 	else if (s_topic == "door_manual_open") {
 		Serial.println("Opening manually the door...");
 		_door->mode = MANUAL;
 		_door->open();
+		blynk_update_door_mode();
 	}
 	else if (s_topic == "door_manual_close") {
 		Serial.println("Closing manually the door...");
 		_door->mode = MANUAL;
 		_door->close();
+		blynk_update_door_mode();
 	}
 }

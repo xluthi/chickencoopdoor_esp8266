@@ -27,7 +27,7 @@
 #include "FlashConfig.h"
 #include "MyRTC.h"
 #include "MyDoor.h"
-
+#include "MyBlynk.h"
 
 // Specific topic that all hardware on the network must listen to and answer.
 // It's a kind of discovery topic to have a view on active hardware.

@@ -23,7 +23,9 @@ const char* wifi_password = "PaSsWoRd";
 #define MQTT_SERVER_IP "192.168.1.7"
 #define MQTT_SERVER_PORT 1883
 
-// The MQTT topic where to send the sensor value
-const char* mqtt_sensor_topic = "/house/sensors/water/city";
+// Blynk configuration
+#define BLYNK_AUTH_TOKEN "your_blynk_token"
+#define BLYNK_SERVER "blynk-cloud.com"
+#define BLYNK_PORT 80
 
 #endif

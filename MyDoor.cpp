@@ -44,6 +44,9 @@ void MyDoor::loop() {
     case NONE:
     case STOP:
       motor.stop();
+      if (state == DOOR_OPENING || state == DOOR_CLOSING) {
+        state = NA;
+      }
       return;
 
     case OPEN:
