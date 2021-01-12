@@ -16,6 +16,7 @@ The initial code is based on https://github.com/xluthi/pulse_counter_esp8266.
 In order to control the door with Blynk, you need to create an account on [Blynk.cc](https://blynk.io) and create the application: this can be done easily by scanning this QR code in the Blynk application.
 
 ![Blynk QR code](Blynk-app-qr-code.png)
+![Blynk application screenshot](Blynk-app-screenshot.jpg)
 
 Once the app is created, add your device in it (via the config icon in the app), and copy your device token in the `private.h` file (you need to create this file, read below in the *configuration* section).
 
